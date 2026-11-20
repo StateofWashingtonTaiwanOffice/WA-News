@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>華州新聞快報</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* Layout: single-column mobile reader styled after the WA Commerce pop-up stand: white logo bar, bright green gradient band, orange accents. */
+:root {
+  --bg: #f5f8f2;
+  --surface: #ffffff;
+  --ink: #1d2a1f;
+  --muted: #5f6b60;
+  --line: #e1e8dc;
+  --green: #2e9b45;
+  --green-light: #8cc63f;
+  --green-soft: #eaf5e1;
+  --orange: #e8611a;
+  --orange-soft: #fdeee4;
+  --font-body: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", system-ui, sans-serif;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  background: var(--bg); color: var(--ink);
+  font-family: var(--font-body); font-size: 16px; line-height: 1.7;
+  -webkit-text-size-adjust: 100%;
+}
+.wrap { max-width: 680px; margin: 0 auto; padding: 0 16px 40px; }
+
+.logobar { background: var(--surface); padding: 14px 16px 12px; }
+.logobar-inner { max-width: 680px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.logobar img { height: 52px; width: auto; display: block; }
+.logobar .office { font-size: 13px; font-weight: 700; color: var(--green); text-align: right; line-height: 1.4; display: grid; gap: 2px; }
+.logobar .office-en { font-size: 11px; font-weight: 500; color: var(--muted); letter-spacing: .01em; }
+@media (max-width: 400px) { .logobar img { height: 44px; } .logobar .office { font-size: 12px; } .logobar .office-en { font-size: 10px; } }
+.band {
+  background: linear-gradient(90deg, var(--green) 0%, var(--green) 35%, var(--green-light) 100%);
+  color: #fff; padding: 14px 16px;
+}
+.band-inner { max-width: 680px; margin: 0 auto; display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.band h1 { font-size: 26px; font-weight: 700; margin: 0; letter-spacing: .04em; line-height: 1.3; }
+.band .en { font-size: 14px; font-weight: 700; letter-spacing: .06em; opacity: .95; }
+
+.tools { display: grid; gap: 10px; padding: 18px 0 6px; }
+.search {
+  width: 100%; padding: 11px 14px; font: inherit; font-size: 16px;
+  border: 2px solid var(--line); border-radius: 999px;
+  background: var(--surface); color: var(--ink);
+}
+.search:focus-visible { outline: none; border-color: var(--green); }
+.chips { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none; }
+.chips::-webkit-scrollbar { display: none; }
+.chip {
+  flex: none; border: 2px solid var(--green); background: var(--surface); color: var(--green);
+  font: inherit; font-size: 14px; font-weight: 700; padding: 4px 16px; border-radius: 999px; cursor: pointer;
+}
+.chip[aria-pressed="true"] { background: var(--green); color: #fff; }
+.chip:focus-visible { outline: 2px solid var(--orange); outline-offset: 2px; }
+
+.count { font-size: 13px; color: var(--muted); padding: 6px 2px; }
+.list { display: grid; gap: 14px; }
+.card {
+  display: grid; gap: 6px; text-decoration: none; color: inherit; overflow: hidden;
+  background: var(--surface); border-radius: 18px; padding: 16px;
+  box-shadow: 0 1px 2px rgba(30,60,30,.06), 0 4px 14px rgba(30,60,30,.06);
+  border-top: 6px solid var(--green);
+}
+.card:nth-child(even) { border-top-color: var(--orange); }
+.card:active { background: var(--green-soft); }
+.card:focus-visible { outline: 3px solid var(--orange); outline-offset: 2px; }
+.card .thumb { margin: -16px -16px 6px; aspect-ratio: 16 / 9; background: var(--green-soft); }
+.card .thumb img, .hero img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.hero { margin: -22px -18px 16px; aspect-ratio: 16 / 9; background: var(--green-soft); overflow: hidden; }
+.meta { display: flex; gap: 8px; align-items: center; font-size: 13px; color: var(--muted); flex-wrap: wrap; }
+.tag { background: var(--orange); color: #fff; font-weight: 700; padding: 1px 10px; border-radius: 999px; font-size: 12.5px; }
+.date { font-variant-numeric: tabular-nums; }
+.card h2 { font-size: 18px; line-height: 1.5; margin: 0; font-weight: 700; color: var(--green); text-wrap: balance; }
+.card p { margin: 0; color: var(--muted); font-size: 14.5px;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.empty { text-align: center; color: var(--muted); padding: 40px 0; }
+
+.back {
+  display: inline-flex; align-items: center; gap: 6px; margin: 16px 0 6px;
+  background: none; border: 0; color: var(--green); font: inherit; font-size: 15px; font-weight: 700; cursor: pointer; padding: 6px 0;
+}
+.back:focus-visible { outline: 2px solid var(--orange); outline-offset: 2px; }
+article { background: var(--surface); border-radius: 18px; padding: 22px 18px; overflow: hidden;
+  box-shadow: 0 1px 2px rgba(30,60,30,.06), 0 4px 14px rgba(30,60,30,.06); border-top: 6px solid var(--green); }
+article .hero + .meta { margin-top: 0; }
+article h2 { font-size: 23px; line-height: 1.45; margin: 10px 0 14px; color: var(--green); text-wrap: balance; }
+article .lead { font-size: 16px; color: var(--ink); background: var(--orange-soft); border-left: 4px solid var(--orange); padding: 10px 14px; border-radius: 0 10px 10px 0; margin: 0 0 18px; }
+article .body p { margin: 0 0 1em; }
+.actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--line); }
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  padding: 10px 20px; border-radius: 999px; font: inherit; font-size: 15px; font-weight: 700; cursor: pointer;
+  text-decoration: none; border: 2px solid var(--orange);
+}
+.btn.primary { background: var(--orange); color: #fff; }
+.btn.ghost { background: transparent; color: var(--orange); }
+.btn:focus-visible { outline: 2px solid var(--green); outline-offset: 2px; }
+.source { font-size: 13px; color: var(--muted); margin-top: 10px; }
+
+footer { background: var(--surface); border-top: 6px solid var(--green-light); padding: 22px 16px 26px; }
+.foot-inner { max-width: 680px; margin: 0 auto; display: grid; gap: 4px; font-size: 13.5px; color: var(--muted); }
+.foot-inner strong { color: var(--green); font-size: 15px; letter-spacing: .06em; }
+.foot-inner a { color: var(--orange); }
+[hidden] { display: none !important; }
+@media (prefers-reduced-motion: no-preference) {
+  #listView, #articleView { animation: fade .18s ease-out; }
+  @keyframes fade { from { opacity: .6; } to { opacity: 1; } }
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="logobar">
+    <div class="logobar-inner">
+      <img src="data:image/png;base64,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" alt="Washington State Department of Commerce 美國華盛頓州商務廳">
+      <div class="office">美國華盛頓州政府駐臺辦事處<span class="office-en">State of Washington Taiwan Office</span></div>
+    </div>
+  </div>
+  <div class="band">
+    <div class="band-inner">
+      <h1>華州新聞快報</h1>
+      <span class="en">WASHINGTON STATE NEWS</span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <section id="listView">
+    <div class="tools">
+      <label for="q" hidden>搜尋新聞</label>
+      <input id="q" class="search" type="search" placeholder="搜尋標題或內容…" autocomplete="off">
+    </div>
+    <div class="count" id="count"></div>
+    <div class="list" id="list"></div>
+  </section>
+
+  <section id="articleView" hidden>
+    <button class="back" id="backBtn" type="button">‹ 返回新聞列表</button>
+    <article id="article"></article>
+  </section>
+</main>
+
+<footer>
+  <div class="foot-inner">
+    <strong>美國華盛頓州政府駐臺辦事處</strong>
+    <span>台北市信義區信義路五段5號7C05室</span>
+    <span>Tel: 02-8789-8855</span>
+    <span>Email: <a href="mailto:wsdoc.tw@gmail.com">wsdoc.tw@gmail.com</a></span>
+    <span>LINE ID: <a href="https://line.me/R/ti/p/@519xhuex">@519xhuex</a></span>
+  </div>
+</footer>
+
+<script>
+/* =====================================================
+   設定：把 Google 試算表「發布到網路」的 CSV 連結貼在下面引號裡
+   ===================================================== */
+/* 試算表 ID：試算表網址 /d/ 和 /edit 中間那一串（試算表要設成「知道連結的任何人都能檢視」） */
+const SHEET_ID = "10n7kgmTMn4lwcmRbBEKk57S7OLs7v9olHr7upOSamG8";
+/* 備用：發布到網路的 CSV 連結 */
+const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQrhJIz9gS_XP5_OaAi-JRxxcDOPHFYUsSenZk3QvsLB_j1I2eN8p8dLvoBZViocW217nbndpud88oz/pub?output=csv";
+
+/* 試算表第一列的欄位名稱（順序可以不同，但名稱要一樣） */
+const COLS = { date: "日期", category: "分類", title: "標題", summary: "摘要", body: "內文", source: "來源", url: "原文連結", image: "圖片連結" };
+
+/* ===================================================== */
+const $ = (s) => document.querySelector(s);
+const esc = (s) => String(s ?? "").replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
+let NEWS = [];
+let cat = "全部";
+
+function parseCSV(text) {
+  const rows = []; let row = []; let f = ""; let q = false;
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (q) {
+      if (c === '"') { if (text[i+1] === '"') { f += '"'; i++; } else q = false; }
+      else f += c;
+    } else if (c === '"') q = true;
+    else if (c === ",") { row.push(f); f = ""; }
+    else if (c === "\n") { row.push(f); rows.push(row); row = []; f = ""; }
+    else if (c !== "\r") f += c;
+  }
+  if (f !== "" || row.length) { row.push(f); rows.push(row); }
+  return rows;
+}
+
+function normDate(s) {
+  const m = String(s).match(/(\d{4})\D+(\d{1,2})\D+(\d{1,2})/);
+  return m ? `${m[1]}-${m[2].padStart(2,"0")}-${m[3].padStart(2,"0")}` : "";
+}
+function fmtDate(d) { if (!d) return ""; const [y,m,day] = d.split("-"); return `${y}年${+m}月${+day}日`; }
+function makeId(s) {
+  let h = 5381; for (const ch of s) h = ((h * 33) ^ ch.codePointAt(0)) >>> 0;
+  return "n" + h.toString(36);
+}
+
+/* Google 雲端硬碟的分享連結自動轉成可以顯示的圖片網址 */
+function imgUrl(u) {
+  if (!/^https?:\/\//.test(u)) return "";
+  if (/drive\.google\.com/.test(u)) {
+    const m = u.match(/\/d\/([\w-]{20,})/) || u.match(/[?&]id=([\w-]{20,})/);
+    if (m) return `https://drive.google.com/thumbnail?id=${m[1]}&sz=w1200`;
+  }
+  return u;
+}
+const imgTag = (n) => n.image ? `<img src="${esc(n.image)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.parentNode.remove()">` : "";
+
+function rowsToNews(rows) {
+  const header = rows[0].map(h => h.trim());
+  const idx = {}; for (const k in COLS) idx[k] = header.indexOf(COLS[k]);
+  const get = (r, k) => idx[k] >= 0 ? (r[idx[k]] || "").trim() : "";
+  return rows.slice(1)
+    .filter(r => get(r, "title"))
+    .map(r => {
+      const date = normDate(get(r, "date"));
+      const title = get(r, "title");
+      return {
+        id: makeId(date + title), date, title,
+        category: get(r, "category") || "新聞",
+        summary: get(r, "summary"),
+        body: get(r, "body").split(/\n+/).map(s => s.trim()).filter(Boolean),
+        source: get(r, "source"),
+        url: /^https?:\/\//.test(get(r, "url")) ? get(r, "url") : "",
+        image: imgUrl(get(r, "image"))
+      };
+    })
+    .sort((a, b) => b.date.localeCompare(a.date));
+}
+
+function renderList() {
+  const q = $("#q").value.trim().toLowerCase();
+  const items = NEWS.filter(n =>
+    (!q || [n.title, n.summary, ...n.body].join(" ").toLowerCase().includes(q)));
+  $("#count").textContent = `共 ${items.length} 則新聞`;
+  $("#list").innerHTML = items.length ? items.map(n => `
+    <a class="card" href="#${esc(n.id)}">
+      ${n.image ? `<div class="thumb">${imgTag(n)}</div>` : ""}
+      <div class="meta"><span class="date">${fmtDate(n.date)}</span></div>
+      <h2>${esc(n.title)}</h2>
+      ${n.summary ? `<p>${esc(n.summary)}</p>` : ""}
+    </a>`).join("") : `<div class="empty">找不到符合的新聞</div>`;
+}
+
+function renderArticle(n) {
+  const link = n.url ? `<a class="btn primary" href="${esc(n.url)}" target="_blank" rel="noopener">閱讀原文 ›</a>` : "";
+  $("#article").innerHTML = `
+    ${n.image ? `<div class="hero">${imgTag(n)}</div>` : ""}
+    <div class="meta"><span class="date">${fmtDate(n.date)}</span></div>
+    <h2>${esc(n.title)}</h2>
+    ${n.summary ? `<p class="lead">${esc(n.summary)}</p>` : ""}
+    <div class="body">${n.body.map(p => `<p>${esc(p)}</p>`).join("")}</div>
+    ${n.source ? `<div class="source">資料來源：${esc(n.source)}</div>` : ""}
+    <div class="actions">${link}<button class="btn ghost" type="button" id="copyBtn">複製這則連結</button></div>`;
+  $("#copyBtn").addEventListener("click", async (e) => {
+    try { await navigator.clipboard.writeText(location.href); e.target.textContent = "已複製連結"; }
+    catch { e.target.textContent = "請長按網址列複製"; }
+  });
+}
+
+function route() {
+  const n = NEWS.find(x => x.id === location.hash.slice(1));
+  if (n) {
+    renderArticle(n);
+    $("#listView").hidden = true; $("#articleView").hidden = false;
+    window.scrollTo(0, 0);
+  } else {
+    $("#articleView").hidden = true; $("#listView").hidden = false;
+  }
+}
+
+let cameFromList = false;
+$("#list").addEventListener("click", (e) => { if (e.target.closest(".card")) cameFromList = true; });
+$("#q").addEventListener("input", renderList);
+$("#backBtn").addEventListener("click", () => {
+  if (cameFromList) { cameFromList = false; history.back(); }
+  else { location.hash = "list"; }
+});
+window.addEventListener("hashchange", route);
+
+/* 方法一：Google 試算表 gviz（用 script 標籤載入，不受跨網站限制） */
+function loadGviz() {
+  return new Promise((resolve, reject) => {
+    if (!SHEET_ID) return reject(new Error("no id"));
+    const cb = "__waNews" + Date.now();
+    const sc = document.createElement("script");
+    const timer = setTimeout(() => { cleanup(); reject(new Error("timeout")); }, 15000);
+    function cleanup() { clearTimeout(timer); delete window[cb]; sc.remove(); }
+    window[cb] = (resp) => {
+      cleanup();
+      try {
+        if (resp.status === "error") throw new Error("sheet error");
+        const t = resp.table;
+        const cell = (c) => c == null ? "" : String(c.f ?? c.v ?? "");
+        let rows = t.rows.map(r => r.c.map(cell));
+        const labels = t.cols.map(c => c.label || "");
+        if (labels.some(l => l.trim())) rows.unshift(labels);
+        resolve(rows);
+      } catch (e) { reject(e); }
+    };
+    sc.onerror = () => { cleanup(); reject(new Error("script error")); };
+    sc.src = `https://docs.google.com/spreadsheets/d/${encodeURIComponent(SHEET_ID)}/gviz/tq?headers=1&tqx=out:json;responseHandler:${cb}&t=${Date.now()}`;
+    document.head.appendChild(sc);
+  });
+}
+/* 方法二：發布到網路的 CSV */
+async function loadCsv() {
+  if (!SHEET_CSV_URL) throw new Error("no csv");
+  const res = await fetch(SHEET_CSV_URL);
+  if (!res.ok) throw new Error(res.status);
+  return parseCSV(await res.text());
+}
+
+async function load() {
+  $("#count").textContent = "新聞載入中…";
+  if (!SHEET_ID && !SHEET_CSV_URL) { $("#count").textContent = ""; $("#list").innerHTML = `<div class="empty">尚未設定新聞試算表</div>`; return; }
+  let rows = null;
+  for (const fn of [loadGviz, loadCsv]) {
+    try { rows = await fn(); if (rows && rows.length > 1) break; } catch (e) { console.warn(fn.name, e); }
+  }
+  if (!rows || rows.length < 2) {
+    $("#count").textContent = "";
+    $("#list").innerHTML = `<div class="empty">新聞暫時載入失敗，請稍後再試一次</div>`;
+    return;
+  }
+  NEWS = rowsToNews(rows);
+  renderList(); route();
+}
+load();
+</script>
+
+</body>
+</html>
